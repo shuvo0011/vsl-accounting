@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('gl_heads', function (Blueprint $table) {
             $table->id('glcode')->startingValue(900001);
             $table->string('glhead');
+            $table->integer('user_id');
             $table->timestamps();
         });
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Officer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OfficerController extends Controller
 {
@@ -30,6 +31,7 @@ class OfficerController extends Controller
         $new_entry->fixed_salary = $req->salary;
         $new_entry->remark = $req->remark;
         $new_entry->status = $req->status;
+        $new_entry->user_id = Auth::user()->id;
         $result = $new_entry->save();
 
         if ($result) {

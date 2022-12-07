@@ -39,6 +39,10 @@ Route::controller(IncomeController::class)->group(function(){
     Route::get('/admin/income','index')->name('admin.income');
     Route::post('/admin/income','entry')->name('admin.income');
     Route::get('/admin/income/report','report')->name('admin.income.report');
+
+    Route::get('/admin/income/todayreport','todayreport')->name('admin.income.todayreport');
+    Route::get('/admin/income/monthreport','monthreport')->name('admin.income.monthreport');
+
 });
 
 ## Expense controller Route 
@@ -46,6 +50,8 @@ Route::controller(ExpenseController::class)->group(function(){
     Route::get('/admin/expense','index')->name('admin.expense');
     Route::post('/admin/expense','entry')->name('admin.expense');
     Route::get('/admin/expense/report','report')->name('admin.expense.report');
+
+    Route::get('/admin/expense/total_amount','total_amount')->name('admin.expense.total_amount');
 });
 
 
@@ -53,7 +59,15 @@ Route::controller(ExpenseController::class)->group(function(){
 ##salary controller 
 Route::controller(SalaryController::class)->group(function(){
     Route::get('/admin/salary','salary_index')->name('admin.salary');
+    Route::post('/admin/salary','salary_insert')->name('admin.salary');
+    Route::get('/admin/salary/edit/{id}','salary_edit')->name('admin.salary.edit');
+    Route::post('/admin/salary/update','salary_update')->name('admin.salary.update');
     
+    Route::get('/admin/salary/salaryMonth','salaryMonth')->name('admin.salary.salaryMonth');
+    Route::get('/admin/salary/salaryAmount','salaryAmount')->name('admin.salary.salaryAmount');
+
+    Route::get('/admin/salary/generate','generate')->name('admin.salary.generate');
+
 
 });
 

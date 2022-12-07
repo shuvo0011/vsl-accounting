@@ -19,6 +19,7 @@ return new class extends Migration
             $table->double('fixed_salary');
             $table->string('remark',50);
             $table->string('status',3);
+            $table->integer('user_id');
             $table->timestamps();
         });
     }

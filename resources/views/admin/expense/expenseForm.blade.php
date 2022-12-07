@@ -45,22 +45,36 @@ Dashboard
                     <label for="officer"> Officer </label>
                     <select name="officer" id="officer" class="form-control">
                         @foreach($officer_data as $row)
-                        <option value="{{ $row->officer_name }}"> {{ $row->officer_name }} </option>
+                        <option value="{{ $row->id }}"> {{ $row->officer_name }} </option>
                         @endforeach
                     </select>
                 </div>
+
+
                 <div class="form-group">
                     <label for="gl_head"> GL HEAD </label>
                     <select name="gl_head" id="gl_head" class="form-control">
                         @foreach($gldata as $row)
-                        <option value="{{ $row->glhead }}"> {{ $row->glhead }} </option>
+                        <option value="{{ $row->glcode }}"> {{ $row->glhead }} </option>
                         @endforeach
                     </select>
                 </div>
 
                 <div class="form-group">
+                    <label for="flag"> Type </label>
+                    <select name="flag" id="flag" class="form-control">
+                        <option value="1"> Account </option>
+                        <option value="2"> Cash In Hand </option>
+                    </select>
+                    <p> total :  <span id="show_amount"> </span></p>
+                </div>
+
+
+
+                <div class="form-group" >
                     <label for="amount"> AMOUNT </label>
-                    <input type="text" class="form-control" name="amount" id="amount" placeholder="Amount">
+                    <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount">
+                    <p id="amount_div"></p>
                 </div>
 
                 <div class="form-group">
@@ -71,7 +85,7 @@ Dashboard
 
                 <div class="form-group">
                     <label for="date"> DATE </label>
-                    <input type="date" class="form-control" name="date" id="date" placeholder="Date">
+                    <input type="text" class="form-control" value="{{ date('m/d/y') }}" name="date" id="date" placeholder="Date" readonly>
                 </div>
 
                 <div class="form-group">
@@ -120,6 +134,56 @@ Dashboard
         minViewMode: "months"
     });
 </script>
+
+
+
+
+
+
+
+
+<script>
+    $("#flag").change(function() {
+        const flag = $(this).val();
+        //console.log(flag);
+        $.ajax({
+            url: "{{ route('admin.expense.total_amount') }}",
+            method: "get",
+            data: {
+                'flag': flag
+            },
+            success: function(response) {
+                //console.log(response);
+                //console.log( $('#show_amount').val());
+                $('#show_amount').text( `${response}`);
+            },
+            error: function(response) {
+                console.log(response);
+            }
+        });
+    })
+    $('#flag').trigger('change');
+</script>
+
+
+<script>
+    $("#amount").keyup(function() {
+        const flag = parseFloat($("#amount").val());
+        const amount = parseFloat($("#show_amount").text());
+        console.log(flag);
+        console.log(amount);
+        if(flag>amount){
+            $("#amount_div").empty();
+            $("#amount").css({backgroundColor: 'red'});
+            $("#amount_div").append("<p>  There is not much money in the account  </p>")
+        }else{
+            $("#amount_div").empty();
+            $("#amount").css('backgroundColor','black');
+        }
+    })
+    $('#amount').trigger('change');
+</script>
+
 
 
 

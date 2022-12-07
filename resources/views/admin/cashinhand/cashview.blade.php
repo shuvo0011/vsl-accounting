@@ -48,12 +48,12 @@ Dashboard
 
                 <div class="form-group">
                     <label for="date"> DATE </label>
-                    <input type="date" class="form-control" name="date" id="date" placeholder="Date">
+                    <input type="text" class="form-control" value="{{ date('m/d/y') }}" name="date" id="date" placeholder="Date" readonly>
                 </div>
 
                 <div class="form-group">
                     <label for="amount"> AMOUNT </label>
-                    <input type="text" class="form-control" name="amount" id="amount" placeholder="Amount">
+                    <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" autocomplete="off">
                 </div>
 
 

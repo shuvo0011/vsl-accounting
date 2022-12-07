@@ -15,14 +15,14 @@ return new class extends Migration
     {
         Schema::create('salaries', function (Blueprint $table) {
             $table->id();
-            $table->string('officer_id');
-            $table->string('officer_name');
-            $table->string('salary_month');
-            $table->string('salary_amount');
-            $table->string('payment_amount');
-            $table->string('payment_date');
-            $table->string('total_due');
+            $table->integer('officer_id');
+            $table->string('salary_month',15);
+            $table->double('salary_amount');
+            $table->double('payment_amount');
+            $table->string('payment_date',15);
+            $table->double('total_due');
             $table->string('remark');
+            $table->integer('user_id');
             $table->timestamps();
         });
     }

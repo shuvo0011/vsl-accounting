@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('salary_month');
             $table->double('amount');
+            $table->integer('user_id');
             $table->timestamps();
         });
     }

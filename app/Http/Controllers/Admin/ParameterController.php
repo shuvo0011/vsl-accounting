@@ -8,9 +8,14 @@ use App\Models\ClientName;
 use App\Models\GlHead;
 use App\Models\Officer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ParameterController extends Controller
 {
+
+
+
+
     //   ..................  cash in hand ....................
     public function cash_index()
     {
@@ -31,6 +36,7 @@ class ParameterController extends Controller
         $new_entry->amount = $req->amount;
         $new_entry->month = $req->month;
         $new_entry->date = $req->date;
+        $new_entry->user_id = Auth::user()->id;
         $result = $new_entry->save();
 
         if ($result) {
@@ -41,6 +47,10 @@ class ParameterController extends Controller
             return redirect('/admin/cashinhand');
         }
     }
+
+
+
+
 
 
     // ................................................................................
@@ -58,6 +68,7 @@ class ParameterController extends Controller
         ]);
         $new_entry = new GlHead();
         $new_entry->glhead = $req->glhead;
+        $new_entry->user_id = Auth::user()->id;
         $result = $new_entry->save();
         if ($result) {
             $req->session()->flash('msg', 'Data Successfully Save');
@@ -67,6 +78,9 @@ class ParameterController extends Controller
             return redirect('/admin/glhead');
         }
     }
+
+
+
 
 
 
@@ -96,6 +110,7 @@ class ParameterController extends Controller
         $new_entry->second_client_cor = $req->sec_client_cor;
         $new_entry->second_cor_mobile = $req->sec_cor_mobile;
         $new_entry->vsl_rmo = $req->rmo;
+        $new_entry->user_id = Auth::user()->id;
         $result = $new_entry->save();
 
         if ($result) {

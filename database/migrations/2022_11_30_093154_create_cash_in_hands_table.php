@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('month',30);
             $table->string('date',30);
             $table->string('amount',30);
+            $table->integer('user_id');
             $table->timestamps();
         });
     }

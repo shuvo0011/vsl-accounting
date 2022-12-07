@@ -16,12 +16,13 @@ return new class extends Migration
     {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
-            $table->string('officer',20);
-            $table->string('gl_head',20);
-            $table->integer('amount');
+            $table->integer('officer_id');
+            $table->integer('gl_code');
+            $table->double('amount');
             $table->string('date',20);
-            $table->string('expense_month');
+            $table->string('expense_month',15);
             $table->string('remark',100);
+            $table->integer('user_id');
             $table->timestamps();
         });
     }

@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class GlHead extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'glcode';
+
 }

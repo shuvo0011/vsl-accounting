@@ -57,8 +57,8 @@ Dashboard
                 </div>
 
                 <div class="form-group">
-                    <label for="status"> Status </label>
-                    <select name="status" id="status">
+                    <label  for="status"> Status </label>
+                    <select class="form-control" name="status" id="status">
                         <option value="Y"> Yes </option>
                         <option value="N"> No </option>
                     </select>
@@ -96,7 +96,7 @@ Dashboard
                 <td> {{ $row->fixed_salary}}</td>
                 <td> {{ $row->remark}}</td>
                 <td> {{ $row->status}}</td>
-                <td> <button> <a href="{{ route('admin.officer.delete',['id'=>$row->id]) }}"> Delete </a> </button> </td>
+                <td> <button class="btn btn-danger" style="color:black;"> <a href="{{ route('admin.officer.delete',['id'=>$row->id]) }}"> Delete </a> </button> </td>
             </tr>
             @endforeach
         </tbody>

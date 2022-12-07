@@ -5,13 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Salary extends Model
+class Account extends Model
 {
     use HasFactory;
 
-
-    public function user(){
+    public function office(){
         return $this->belongsTo(Officer::class,'officer_id');
+    }
+
+    public function glname(){
+        return $this->belongsTo(GlHead::class,'gl_code');
     }
 
 }
