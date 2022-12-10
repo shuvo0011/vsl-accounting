@@ -22,7 +22,6 @@ class OfficerController extends Controller
         $req->validate([
             'name' => 'required',
             'salary' => 'required',
-            'remark' => 'required',
             'status' => 'required',
         ]);
 

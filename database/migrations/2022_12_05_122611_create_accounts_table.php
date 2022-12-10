@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('amount',15);
             $table->string('date',15);
             $table->string('month',15);
-            $table->string('remark',100);
+            $table->string('remark',100)->nullable();
             $table->integer('flag');
             $table->string('type',5);
             $table->integer('user_id');

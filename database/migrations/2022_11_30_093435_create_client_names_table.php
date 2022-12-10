@@ -16,10 +16,10 @@ return new class extends Migration
         Schema::create('client_names', function (Blueprint $table) {
             $table->id();
             $table->string('vsl_client',30);
-            $table->string('first_client_cor');
-            $table->string('first_cor_mobile',15);
-            $table->string('second_client_cor');
-            $table->string('second_cor_mobile',15);
+            $table->string('first_client_cor')->nullable();
+            $table->string('first_cor_mobile',15)->nullable();
+            $table->string('second_client_cor')->nullable();
+            $table->string('second_cor_mobile',15)->nullable();
             $table->string('vsl_rmo');
             $table->integer('user_id');
             $table->timestamps();

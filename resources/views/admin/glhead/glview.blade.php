@@ -46,6 +46,16 @@ Dashboard
                     <input type="text" class="form-control" name="glhead" id="glhead" placeholder=" GL Head ">
                 </div>
 
+                <div class="form-group">
+                    <label for="gltype">  TYPE </label>
+                    <select class="form-control" name="gltype" id="gltype">
+                        <option value="I"> Income </option>
+                        <option value="E"> Expense </option>
+                        <option value="B"> Both </option>
+                    </select>
+                </div>
+
+
             <div class="card-footer">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
@@ -65,6 +75,8 @@ Dashboard
                     <th> SL </th>
                     <th> GL Head  </th>
                     <th> GL CODE  </th>
+                    <th> GL Type  </th>
+                    <th> GL Balance  </th>
                 </tr>
             </thead>
             <tbody>
@@ -74,6 +86,8 @@ Dashboard
                     <td> {{ ++$sl }}</td>
                     <td> {{ $row->glhead}}</td>
                     <td> {{ $row->glcode}}</td>
+                    <td> {{ $row->gltype}}</td>
+                    <td> {{ $row->balance }}</td>
                 </tr>
             @endforeach
             </tbody>

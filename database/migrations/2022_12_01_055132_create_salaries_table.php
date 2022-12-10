@@ -21,7 +21,7 @@ return new class extends Migration
             $table->double('payment_amount');
             $table->string('payment_date',15);
             $table->double('total_due');
-            $table->string('remark');
+            $table->string('remark')->nullable();
             $table->integer('user_id');
             $table->timestamps();
         });

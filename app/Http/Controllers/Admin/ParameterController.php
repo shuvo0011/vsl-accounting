@@ -68,6 +68,7 @@ class ParameterController extends Controller
         ]);
         $new_entry = new GlHead();
         $new_entry->glhead = $req->glhead;
+        $new_entry->gltype = $req->gltype;
         $new_entry->user_id = Auth::user()->id;
         $result = $new_entry->save();
         if ($result) {

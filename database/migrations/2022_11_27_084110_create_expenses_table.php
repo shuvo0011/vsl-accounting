@@ -21,7 +21,7 @@ return new class extends Migration
             $table->double('amount');
             $table->string('date',20);
             $table->string('expense_month',15);
-            $table->string('remark',100);
+            $table->string('remark',100)->nullable();
             $table->integer('user_id');
             $table->timestamps();
         });

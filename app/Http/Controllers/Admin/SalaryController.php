@@ -57,8 +57,8 @@ class SalaryController extends Controller
 
         $result = Salary::where('officer_id', '=', $req->officer)->where('salary_month', '=', $req->salary_month)
             ->update([
-                'salary_month' => $req->salary_month,
-                'salary_amount' => $req->salary_amount,
+                // 'salary_month' => $req->salary_month,
+                // 'salary_amount' => $req->salary_amount,
                 'payment_amount' => $req->payment_amount,
                 'payment_date' => $req->payment_date,
                 'total_due' => $req->due_amount - $req->payment_amount,
@@ -68,10 +68,10 @@ class SalaryController extends Controller
 
         if ($result) {
 // ...................................... data save in expense at account table ................
-            
+            $gl = GlHead::where('glhead','=','Salary')->first(['glcode'])['glcode'];
             $acc_entry = new Account();
             $acc_entry->officer_id = $req->officer;
-            $acc_entry->gl_code = GlHead::where('glhead','=','Salary')->first(['glcode'])['glcode'];
+            $acc_entry->gl_code = $gl;
             $acc_entry->amount = $req->payment_amount;
             $acc_entry->date = $req->payment_date;
             $acc_entry->month = date('Fy');
@@ -79,6 +79,9 @@ class SalaryController extends Controller
             $acc_entry->type = "E";
             $acc_entry->user_id = Auth::user()->id;
             $acc_result = $acc_entry->save();
+
+            $value = GlHead::where('glcode', '=', $gl)->first(['balance'])['balance'];
+            GlHead::where('glcode', '=', $gl)->update([ 'balance'=> $value+$req->payment_amount ]);
 
 
             $req->session()->flash('msg', 'Data Successfully Save');

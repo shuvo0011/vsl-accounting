@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id()->startingValue(001);
             $table->string('officer_name',30);
             $table->double('fixed_salary');
-            $table->string('remark',50);
+            $table->string('remark',50)->nullable();
             $table->string('status',3);
             $table->integer('user_id');
             $table->timestamps();
