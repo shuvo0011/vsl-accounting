@@ -16,11 +16,10 @@ class ParameterController extends Controller
 
 
 
-    //   ..................  cash in hand ....................
+    //   ..................  CASH IN HAND ....................
     public function cash_index()
     {
         $cash = CashInHand::all();
-        // dd($cash);
         return view('admin.cashinhand.cashview', compact('cash'));
     }
 
@@ -49,12 +48,8 @@ class ParameterController extends Controller
     }
 
 
-
-
-
-
     // ................................................................................
-    //  ................. gl head ......................... ............................
+    //  ................. GL HEAD .......... ............................
     public function gl_index()
     {
         $gldata = GlHead::all();
@@ -64,13 +59,17 @@ class ParameterController extends Controller
     {
         $req->validate([
             'glhead' => 'required',
-
+            'gltype' => 'required',
+            'glbudget' => 'required',
         ]);
+
         $new_entry = new GlHead();
         $new_entry->glhead = $req->glhead;
         $new_entry->gltype = $req->gltype;
+        $new_entry->glbudget = $req->glbudget;
         $new_entry->user_id = Auth::user()->id;
         $result = $new_entry->save();
+
         if ($result) {
             $req->session()->flash('msg', 'Data Successfully Save');
             return redirect('/admin/glhead');
@@ -81,16 +80,12 @@ class ParameterController extends Controller
     }
 
 
-
-
-
-
-    //  .................................................................................................................
-    // ----------------  clients Name  ................................................................................................
+    //  ..........................................................................
+    // ----------------  clients Name  ..........................................
     public function client_index()
     {
         $client_data = ClientName::all();
-        return view('admin.officer.officerview', compact('client_data'));
+        return view('admin.clientname.clientview', compact('client_data'));
     }
 
     public function client_insert(Request $req)
@@ -116,10 +111,12 @@ class ParameterController extends Controller
 
         if ($result) {
             $req->session()->flash('msg', 'Data Successfully Save');
-            return redirect('/admin/officer');
+            return redirect('/admin/clientname');
         } else {
             $req->session()->flash('msg', 'Data Do Not Save Successfully');
-            return redirect('/admin/officer');
+            return redirect('/admin/clientname');
         }
     }
+
+
 }

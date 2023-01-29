@@ -9,3 +9,4 @@ class Income extends Model
 {
     use HasFactory;
 }
+ 

@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>VSL Account | @yield('title')</title>
@@ -11,8 +12,7 @@
     <link rel="stylesheet" href="{{ asset('support_files/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('support_files/dist/css/adminlte.min.css') }}">
-
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
 </head>
 
@@ -99,16 +99,22 @@
                             </ul>
                         </li> -->
 
+                        @php
 
-                        <!-- .....................income menu...............................  -->
+                        $per = Auth::user()->id;
+                        //dd($per);
+                        $id = DB::select("SELECT * FROM roles as rl left join permissions as per on rl.id=per.role_id LEFT join users as u on per.user_id=u.id where u.id=?",[$per]);
+                        //dd($id[0]->bookkeeping);
+                        @endphp
+
+                        <!--    ..........................income menu......................................  -->
+                        @if($id[0]->bookkeeping == "Y")
                         <li class="nav-item">
                             <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-chart-pie"></i>
+                                <!-- <i class="nav-icon fas fa-chart-pie"></i> -->
                                 <p> BOOK KEEPING <i class="right fas fa-angle-left"></i> </p>
                             </a>
-
                             <ul class="nav nav-treeview">
-
                                 <!--  income menu  -->
                                 <li class="nav-item">
                                     <a href="#" class="nav-link">
@@ -154,36 +160,35 @@
                                 </li>
                             </ul>
                         </li>
+                        @endif
 
-                        <!--      Parameter setup        -->
 
 
+                        <!-- ..................................................................................................... -->
+                        <!--          ........................     Parameter setup   .........................     -->
+
+                        @if($id[0]->paramsetup == "Y")
                         <li class="nav-item">
                             <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-cog"></i>
+                                <!-- <i class="nav-icon fas fa-cog"></i> -->
                                 <p> Parameter Setup <i class="right fas fa-angle-left"></i> </p>
                             </a>
-
                             <ul class="nav nav-treeview">
-
-                                <!--  cash in hand  -->
-                                <li class="nav-item">
+                                <!--  .......................cash in hand....................  -->
+                                <!-- <li class="nav-item">
                                     <a href="{{ route('admin.cashinhand') }}" class="nav-link">
-                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        <i class="far fa-circle nav-icon"></i>
                                         <p> Cash In Hand </p>
                                     </a>
-                                </li>
-
-                                <!--   gl head  -->
+                                </li> -->
+                                <!-- ..........................  gl head.......................  -->
                                 <li class="nav-item">
                                     <a href="{{ route('admin.glhead') }}" class="nav-link">
                                         <!-- <i class="far fa-circle nav-icon"></i> -->
                                         <p> GL Head </p>
                                     </a>
                                 </li>
-
-
-                                <!--  officer  -->
+                                <!-- .................... officer.......................  -->
                                 <li class="nav-item">
                                     <a href="{{ route('admin.officer') }}" class="nav-link">
                                         <!-- <i class="far fa-circle nav-icon"></i> -->
@@ -193,21 +198,172 @@
 
                                 <!--   Clients Name  -->
                                 <li class="nav-item">
-                                    <a href="#" class="nav-link">
+                                    <a href="{{ route('admin.clientname') }}" class="nav-link">
                                         <!-- <i class="far fa-circle nav-icon"></i> -->
                                         <p> Clients Name </p>
                                     </a>
                                 </li>
                             </ul>
                         </li>
+                        @endif
 
+
+                        <!--  .........salary...................  -->
+                        @if($id[0]->salary == "Y")
                         <li class="nav-item">
                             <a href="{{ route('admin.salary') }}" class="nav-link">
-                                <i class="nav-icon fas fa-cog"></i>
-                                <p> Salary  </p>
+                                <!-- <i class="nav-icon fas fa-chart-pie"></i> -->
+                                <p> Salary </p>
                             </a>
-
                         </li>
+                        @endif
+
+
+
+                        <!--   ............... Budget Report .............................  -->
+                        @if( $id[0]->budget == "Y")
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <!-- <i class="nav-icon fas fa-chart-pie"></i> -->
+                                <p> Budget <i class="right fas fa-angle-left"></i> </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href=" {{ route('admin.budgetchange') }} " class="nav-link">
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        <p> Budget change </p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href=" {{ route('admin.budgetreport') }} " class="nav-link">
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        <p> Budget Report </p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @endif
+
+
+
+                        <!-- .................    Account Receivable        ...................  -->
+                        @if( $id[0]->account_rec == "Y")
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <!-- <i class="nav-icon fas fa-chart-pie"></i> -->
+                                <p> Account Receivable <i class="right fas fa-angle-left"></i> </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href=" {{ route('admin.accountreceivale') }} " class="nav-link">
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        <p> Account Entry </p>
+                                    </a>
+                                </li>
+                                <!-- <li class="nav-item">
+                                    <a href=" {{ route('admin.accountrecreport') }} " class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p> Account Report </p>
+                                    </a>
+                                </li> -->
+                            </ul>
+                        </li>
+                        @endif
+
+
+                        <!-- .................    Account Payable      ...................  -->
+                        @if( $id[0]->account_pay == "Y")
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <!-- <i class="nav-icon fas fa-chart-pie"></i> -->
+                                <p> Account Payable <i class="right fas fa-angle-left"></i> </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href=" {{ route('admin.accountpayable') }} " class="nav-link">
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        <p> Account Pay </p>
+                                    </a>
+                                </li>
+                                <!-- <li class="nav-item">
+                                    <a href=" {{ route('admin.accountrecreport') }} " class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p> Account Report </p>
+                                    </a>
+                                </li> -->
+                            </ul>
+                        </li>
+                        @endif
+
+
+                        <!--        ......... Setting Create  ........                    -->
+                        @if($id[0]->setting == "Y")
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <!-- <i class="nav-icon fas fa-chart-pie"></i> -->
+                                <p> Setting <i class="right fas fa-angle-left"></i> </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <!--  Rule Menu  -->
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link">
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        <p> Role </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href=" {{ route('admin.rolecreate') }} " class="nav-link">
+                                                <!-- <i class="far fa-circle nav-icon"></i> -->
+                                                <p> Role Create </p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href=" {{ route('admin.roleassign') }} " class="nav-link">
+                                                <!-- <i class="far fa-circle nav-icon"></i> -->
+                                                <p> Role Assign </p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <!-- ............ User menu.............. -->
+
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link">
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        <p> User </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ route('admin.usercreate') }}" class="nav-link">
+                                                <!-- <i class="far fa-circle nav-icon"></i> -->
+                                                <p> User create </p>
+                                            </a>
+
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href=" {{ route('admin.userpermission') }} " class="nav-link">
+                                                <!-- <i class="far fa-circle nav-icon"></i> -->
+                                                <p> user permission </p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        @endif
+
+
+                        <!--  .........  database backup ...................  -->
+                        @if($id[0]->backup == "Y")
+                        <li class="nav-item">
+                            <a href="{{ route('admin.database.backup') }}" class="nav-link">
+                                <!-- <i class="nav-icon fas fa-chart-pie"></i> -->
+                                <p> Database backup </p>
+                            </a>
+                        </li>
+                        @endif
+
 
                     </ul>
                 </nav>

@@ -19,7 +19,7 @@ Dashboard
                     </ol>
                 </div>
             </div>
-        </div><!-- /.container-fluid -->
+        </div>
     </section>
 
     <div style="padding-left:15px; background-color:aliceblue; color:black; ">
@@ -40,80 +40,73 @@ Dashboard
         <form action=" {{ route('admin.officer') }}" method="POST">
             @csrf
             <div class="card-body">
-
                 <div class="form-group">
                     <label for="name"> Officer Name </label>
                     <input type="text" class="form-control" name="name" id="name" placeholder=" Officer Name ">
                 </div>
-
                 <div class="form-group">
                     <label for="salary"> Fixed Salary </label>
                     <input type="text" class="form-control" name="salary" id="salary" placeholder=" salary ">
                 </div>
-
                 <div class="form-group">
                     <label for="remark"> Remarks </label>
                     <input type="text" class="form-control" name="remark" id="remark" placeholder=" Remarks ">
                 </div>
-
                 <div class="form-group">
-                    <label  for="status"> Status </label>
+                    <label for="status"> Status </label>
                     <select class="form-control" name="status" id="status">
                         <option value="Y"> Yes </option>
                         <option value="N"> No </option>
                     </select>
                 </div>
-
                 <div class="card-footer">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
         </form>
     </div>
 
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                Officer Entry List
+            </h3>
+        </div>
+        <div class="card-body">
+            <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th> SL </th>
+                        <th> Officer Name </th>
+                        <th> Fixed Salary </th>
+                        <th> Remark </th>
+                        <th> Status </th>
+                    </tr>
+                <tbody>
+                    @php $sl=0 @endphp
+                    @foreach($officer_data as $row)
+                    <tr>
+                        <td> {{ $row->id }}</td>
+                        <td> {{ $row->officer_name}}</td>
+                        <td> {{ $row->fixed_salary}}</td>
+                        <td> {{ $row->remark}}</td>
+                        <td> {{ $row->status}}</td>
+                        <!-- <td> <button class="btn btn-danger" style="color:black;"> <a href="{{ route('admin.officer.delete',['id'=>$row->id]) }}"> Delete </a> </button> </td> -->
+                    </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                </tfoot>
+            </table>
+        </div>
+    </div>
 
-
-    @if ( count($officer_data) < 1 ) <div class="card-footer">
-        <p> NO DATA </p>
 </div>
-@else
-<div>
-    <table id="example1" class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th> SL </th>
-                <th> Officer Name </th>
-                <th> Fixed Salary </th>
-                <th> Remark </th>
-                <th> Status </th>
-                <th> Action </th>
-            </tr>
-        <tbody>
-            @php $sl=0 @endphp
-            @foreach($officer_data as $row)
-            <tr>
-                <td> {{ $row->id }}</td>
-                <td> {{ $row->officer_name}}</td>
-                <td> {{ $row->fixed_salary}}</td>
-                <td> {{ $row->remark}}</td>
-                <td> {{ $row->status}}</td>
-                <td> <button class="btn btn-danger" style="color:black;"> <a href="{{ route('admin.officer.delete',['id'=>$row->id]) }}"> Delete </a> </button> </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-@endif
-
-
-</div>
-
-
 @endsection
 
 
 
+
+
 @section('script.js')
-
-
 
 @endsection

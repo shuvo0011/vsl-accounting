@@ -20,7 +20,7 @@ Dashboard
                     </ol>
                 </div>
             </div>
-        </div><!-- /.container-fluid -->
+        </div>
     </section>
 
     <div style="padding-left:15px; background-color:aliceblue; color:black; ">
@@ -38,22 +38,20 @@ Dashboard
     @endif
 
     <div>
-        <form action=" {{ route('admin.glhead') }}" method="POST">
+        <form action=" {{ route('admin.clientname') }}" method="POST">
             @csrf
             <div class="card-body">
-
                 <div class="form-group">
                     <label for="client"> VSL Client </label>
                     <input type="text" class="form-control" name="client" id="client" placeholder="  VSL client ">
                 </div>
-
                 <div class="form-group">
                     <label for="f_client_cor"> First Client Corrospondent </label>
                     <input type="text" class="form-control" name="f_client_cor" id="f_client_cor" placeholder=" GL Client Corrospondent ">
                 </div>
                 <div class="form-group">
-                    <label for="f_cor_mobile"> First Corrospondent Mobile  </label>
-                    <input type="text" class="form-control" name="f_cor_mobile" id="f_cor_mobile" placeholder=" First Corrospondent Mobile ">
+                    <label for="f_cor_mobile"> First Corrospondent Mobile </label>
+                    <input type="number" class="form-control" name="f_cor_mobile" id="f_cor_mobile" placeholder=" First Corrospondent Mobile ">
                 </div>
                 <div class="form-group">
                     <label for="sec_client_cor"> Second Client Corrospondent </label>
@@ -61,14 +59,12 @@ Dashboard
                 </div>
                 <div class="form-group">
                     <label for="sec_cor_mobile"> Second Corrospondent Mobile </label>
-                    <input type="text" class="form-control" name="sec_cor_mobile" id="sec_cor_mobile" placeholder=" Second Corrospondent Mobile  ">
+                    <input type="number" class="form-control" name="sec_cor_mobile" id="sec_cor_mobile" placeholder=" Second Corrospondent Mobile  ">
                 </div>
-
                 <div class="form-group">
                     <label for="rmo"> VSL RMO </label>
                     <input type="text" class="form-control" name="rmo" id="rmo" placeholder=" VSL RMO ">
                 </div>
-                
                 <div class="card-footer">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
@@ -77,50 +73,48 @@ Dashboard
     </div>
 
 
-    @if ( count(client_data)>1 )
-    <div class="card-footer canter">
-        <p> NO DATA </p>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                Income Entry List
+            </h3>
+        </div>
+        <div class="card-body">
+            <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th> id </th>
+                        <th> VSL Client </th>
+                        <th> First Client Corrospondent </th>
+                        <th> First Corrospondent Mobile </th>
+                        <th> Second Client Corrospondent </th>
+                        <th> Second Client Mobile </th>
+                        <th> VSL RMO </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($client_data as $row)
+                    <tr>
+                        <td> {{ $row->id }}</td>
+                        <td> {{ $row->vsl_client }}</td>
+                        <td> {{ $row->first_client_cor }}</td>
+                        <td> {{ $row->first_cor_mobile }}</td>
+                        <td> {{ $row->second_client_cor}}</td>
+                        <td> {{ $row->second_cor_mobile}}</td>
+                        <td> {{ $row->vsl_rmo}}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                </tfoot>
+            </table>
+        </div>
     </div>
-    @else
-    <div>
-        <table id="example1" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th> id </th>
-                    <th> VSL Client </th>
-                    <th> First Client Corrospondent </th>
-                    <th> First Corrospondent Mobile </th>
-                    <th> Second Client Corrospondent </th>
-                    <th> Second Client Mobile </th>
-                    <th> VSL RMO </th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @foreach($client_data as $row)
-                <tr>
-                    <td> {{ $row->id }}</td>
-                    <td> {{ $row->vsl_client }}</td>
-                    <td> {{ $row->first_client_cor }}</td>
-                    <td> {{ $row->first_cor_mobile }}</td>
-                    <td> {{ $row->second_client_cor}}</td>
-                    <td> {{ $row->second_cor_mobile}}</td>
-                    <td> {{ $row->vsl_rmo}}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-    @endif
 
 </div>
-
-
 @endsection
 
 
 
 @section('script.js')
-
-
 @endsection

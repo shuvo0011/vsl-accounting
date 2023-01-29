@@ -23,6 +23,7 @@ class OfficerController extends Controller
             'name' => 'required',
             'salary' => 'required',
             'status' => 'required',
+            'remark' => 'required',
         ]);
 
         $new_entry = new Officer();

@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Account;
 use App\Models\CashInHand;
 use App\Models\GlHead;
 use App\Models\Officer;
 use App\Models\Salary;
+use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,47 +18,23 @@ class SalaryController extends Controller
 {
     public function salary_index()
     {
-
-
         $salary = Salary::orderBy('officer_id')->get();
-        // dd($salary);
-        // $officer_data = Officer::where('status', '=', 'Y')->get();
         $officer_data = Officer::all();
-        $expense_total = Account::where('type', '=', 'E')->sum('amount');
-        $income_total = Account::where('type', '=', 'I')->sum('amount');
-        $cashinhand_total = CashInHand::sum('amount');
-        $account_money = $income_total -  $expense_total - $cashinhand_total ;
-
+        $account_money = GlHead::where('glhead','=','Account')->first('balance')['balance'];
         return view('admin.salary.salaryview', compact('salary', 'officer_data'))->with('account_money',$account_money);
     }
 
     public function salary_insert(Request $req)
     {
-        // $validate = $req->validate([
-        //     'salary_month' => 'required',
-        //     'salary_amount' => 'required|max:20',
-        //     'pay_amount' => 'required|max:20',
-        //     'pay_date' => 'required|max:100',
-        //     'total_due' => 'required|max:100',
-        //     'remark' => 'required|max:100',
-        // ]);
-        // dd($req);
-
-        // $new_entry = new Salary();
-        // $new_entry->officer_name = Officer::select('officer_name')->where('id', $req->officer)->first()->officer_name;
-        // $new_entry->officer_id = $req->officer;
-        // $new_entry->salary_month = $req->salary_month;
-        // $new_entry->salary_amount = $req->salary_amount;
-        // $new_entry->payment_amount = $req->payment_amount;
-        // $new_entry->payment_date = $req->payment_date;
-        // $new_entry->total_due = $req->salary_amount - $req->payment_amount;
-        // $new_entry->remark = $req->remark;
-        // $result = $new_entry->save();
-
+        $req->validate([
+            'salary_month' => 'required',
+            'payment_amount' => 'required|max:20',
+            'payment_date' => 'required|max:100',
+            'remark' => 'required',
+        ]);
+ 
         $result = Salary::where('officer_id', '=', $req->officer)->where('salary_month', '=', $req->salary_month)
             ->update([
-                // 'salary_month' => $req->salary_month,
-                // 'salary_amount' => $req->salary_amount,
                 'payment_amount' => $req->payment_amount,
                 'payment_date' => $req->payment_date,
                 'total_due' => $req->due_amount - $req->payment_amount,
@@ -67,22 +43,27 @@ class SalaryController extends Controller
             ]);
 
         if ($result) {
-// ...................................... data save in expense at account table ................
+            // ...................................... salary entry tranasaction table add krlm ................
             $gl = GlHead::where('glhead','=','Salary')->first(['glcode'])['glcode'];
-            $acc_entry = new Account();
+            $acc_entry = new Transaction();
             $acc_entry->officer_id = $req->officer;
             $acc_entry->gl_code = $gl;
             $acc_entry->amount = $req->payment_amount;
             $acc_entry->date = $req->payment_date;
             $acc_entry->month = date('Fy');
             $acc_entry->remark = $req->remark;
-            $acc_entry->type = "E";
+            $acc_entry->acc_flag = "E";
+            $acc_entry->tr_mood = "A";
             $acc_entry->user_id = Auth::user()->id;
-            $acc_result = $acc_entry->save();
+            $acc_entry->save();
 
+            //salary tk gl head jog krlm 
             $value = GlHead::where('glcode', '=', $gl)->first(['balance'])['balance'];
             GlHead::where('glcode', '=', $gl)->update([ 'balance'=> $value+$req->payment_amount ]);
-
+            
+            // salary tk account theke kete nilam 
+            $acc_value = GlHead::where('glhead', '=', 'Account')->first(['balance'])['balance'];
+            GlHead::where('glhead', '=','Account')->update([ 'balance'=> $acc_value - $req->payment_amount ]);
 
             $req->session()->flash('msg', 'Data Successfully Save');
             return redirect('/admin/salary');
@@ -121,8 +102,6 @@ class SalaryController extends Controller
         }
     }
 
-
-
     public function salaryMonth(Request $req)
     {
         $id = $req->officer_id;
@@ -130,7 +109,7 @@ class SalaryController extends Controller
         return $salary_month;
     }
 
-
+    // ..................... Due Amount ..........................
     public function salaryAmount(Request $req)
     {
         //dd($req);

@@ -13,16 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('salaries', function (Blueprint $table) {
+        Schema::create('budget_logs', function (Blueprint $table) {
             $table->id();
-            $table->integer('officer_id');
-            $table->string('salary_month',15);
-            $table->double('salary_amount');
-            $table->double('payment_amount');
-            $table->string('payment_date',15);
-            $table->double('total_due');
-            $table->string('remark');
-            $table->integer('user_id');
+            $table->string('glhead',12);
+            $table->string('glbudget',50);
+            $table->string('month',20);
             $table->timestamps();
         });
     }
@@ -34,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('salaries');
+        Schema::dropIfExists('budget_logs');
     }
 };

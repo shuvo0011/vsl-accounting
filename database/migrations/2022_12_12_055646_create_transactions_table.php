@@ -13,16 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('accounts', function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->integer('officer_id');
             $table->integer('gl_code');
             $table->string('amount',15);
             $table->string('date',15);
             $table->string('month',15);
-            $table->string('remark',100)->nullable();
-            $table->integer('flag');
-            $table->string('type',5);
+            $table->string('remark',150);
+            $table->integer('acc_flag');
+            $table->string('tr_type',5);
+            $table->string('tr_mood',5);
             $table->integer('user_id');
             $table->timestamps();
         });
@@ -35,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('accounts');
+        Schema::dropIfExists('transactions');
     }
 };

@@ -6,20 +6,21 @@ Dashboard
 @section('page-content')
 
 <div class="content-wrapper">
+
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1> Cash in Hand </h1>
+                    <h1> User create </h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active"> Income Entry </li>
+                        <li class="breadcrumb-item active"> user create</li>
                     </ol>
                 </div>
             </div>
-        </div><!-- /.container-fluid -->
+        </div>
     </section>
 
     <div style="padding-left:15px; background-color:aliceblue; color:black; ">
@@ -37,64 +38,64 @@ Dashboard
     @endif
 
     <div>
-        <form action=" {{ route('admin.cashinhand') }}" method="POST">
+        <form action="{{ route('admin.usercreate') }}" method="POST">
             @csrf
             <div class="card-body">
-
                 <div class="form-group">
-                    <label for="month"> MONTH </label>
-                    <input class="form-control" name="month" id="month" placeholder="Month" autocomplete="off">
+                    <label for="name"> User Name </label>
+                    <input type="text" class="form-control" name="name" id="name">
+                </div>
+                <div class="form-group">
+                    <label for="email"> Email Address </label>
+                    <input type="text" class="form-control" name="email" id="email">
+                </div>
+                <div class=" form-group">
+                    <label for="pwd1"> Password </label>
+                    <input type="text" class="form-control" name="pwd1" id="pwd1">
+                </div>
+                <div class=" form-group">
+                    <label for="pwd2"> Confirm Password </label>
+                    <input type="text" class="form-control" name="pwd2" id="pwd2">
                 </div>
 
-                <div class="form-group">
-                    <label for="date"> DATE </label>
-                    <input type="text" class="form-control" value="{{ date('m/d/y') }}" name="date" id="date" placeholder="Date" readonly>
-                </div>
-
-                <div class="form-group">
-                    <label for="amount"> AMOUNT </label>
-                    <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" autocomplete="off">
-                </div>
-
-
-                <div class="card-footer">
+                <div class="">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </div>
         </form>
     </div>
 
-    @if(count($cash)<1) <div class="card-footer canter">
-        <p> NO DATA </p>
-</div>
-@else
-<div>
-    <table id="example1" class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th> SL </th>
-                <th> Month </th>
-                <th> Date </th>
-                <th> Amount </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($cash as $row)
-            <tr>
-                <td> {{ $row->id}}</td>
-                <td> {{ $row->month}}</td>
-                <td> {{ $row->date}}</td>
-                <td> {{ $row->amount}}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-@endif
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                User List
+            </h3>
+        </div>
+        <div class="card-body">
+
+            <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th> Name </th>
+                        <th> Email </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($userdata as $row)
+                    <tr>
+                        <td> {{ $row->name }}</td>
+                        <td> {{ $row->email }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                </tfoot>
+            </table>
+        </div>
+    </div>
 
 </div>
-
-
 @endsection
 
 
@@ -128,5 +129,11 @@ Dashboard
         minViewMode: "months"
     });
 </script>
+
+
+<script>
+
+</script>
+
 
 @endsection

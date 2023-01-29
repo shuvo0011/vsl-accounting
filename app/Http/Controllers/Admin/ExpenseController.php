@@ -3,12 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Account;
-use App\Models\CashInHand;
-use App\Models\Expense;
 use App\Models\GlHead;
-use App\Models\Income;
 use App\Models\Officer;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,102 +15,259 @@ class ExpenseController extends Controller
     {
         $officer_data = Officer::all();
         $gldata = GlHead::all();
-        return view('admin.expense.expenseForm', compact('officer_data', 'gldata'));
+        $account_total = GlHead::where('glhead', '=', 'Account')->first('balance')['balance'];
+
+        // $expense = Transaction::where('acc_flag', '=', 'E')->where('tr_mood', '<>', 'C')->orderBy('id', 'desc')->take(5)->get();
+        $expense = Transaction::where('acc_flag', '=', 'E')->orderBy('id', 'desc')->take(5)->get();
+
+        $cash_total = GlHead::where('glhead', '=', 'Cash In Hand')->first('balance')['balance'];
+
+        return view('admin.expense.expenseForm', compact('officer_data', 'gldata', 'expense'))->with('account_total', $account_total)->with('cash_total', $cash_total);
     }
 
     public function entry(Request $req)
     {
-
-        $validate = $req->validate([
+        $req->validate([
             'officer' => 'required|max:20',
             'gl_head' => 'required|max:20',
             'amount' => 'required|numeric',
             'date' => 'required|max:20',
-            'expense_month' => 'required|max:20',
+            'month' => 'required|max:20',
+            'tr_mood' => 'required',
+            'tr_type' => 'required',
+            'remark' => 'required',
         ]);
 
-        //   off 
-        // $new_entry = new Expense();
-        // $new_entry->officer = $req->officer;
-        // $new_entry->gl_head = $req->gl_head;
-        // $new_entry->amount = $req->amount;
-        // $new_entry->expense_month = $req->expense_month;
-        // $new_entry->date = $req->date;
-        // $new_entry->type = "E";
-        // $new_entry->remark = $req->remark;
-        // $new_entry->remark = Auth::user()->id;
-        // $result = $new_entry->save();
-
-        //  ...................new data input in Account ........... 
-        if ($req->gl_head ==  GlHead::where('glhead', '=', 'Cash In Hand')->first('glcode')['glcode']) {
-            $new_entry = new CashInHand();
-            $new_entry->month = $req->expense_month;
-            $new_entry->date = $req->date;
-            $new_entry->amount = $req->amount;
-            $new_entry->user_id = Auth::user()->id;
-            $gl_result = $new_entry->save();
-            if ($gl_result) {
-                $req->session()->flash('msg', 'Data Successfully Save');
-                return redirect('/admin/expense');
-            } else {
-                $req->session()->flash('msg', 'Data Do Not Save Successfully');
-                return redirect('/admin/expense');
-            }
-        } else {
-            $new_entry = new Account();
+        //  ...................   taka cost from account  ........... 
+        if ($req->tr_mood ==  'A') {
+            $new_entry = new Transaction();
             $new_entry->officer_id = $req->officer;
             $new_entry->gl_code = $req->gl_head;
             $new_entry->amount = $req->amount;
-            $new_entry->month = $req->expense_month;
+            $new_entry->month = $req->month;
             $new_entry->date = $req->date;
-            $new_entry->type = "E";
+            $new_entry->acc_flag = "E";
+            $new_entry->tr_mood = $req->tr_mood;
+            $new_entry->tr_type = $req->tr_type;
             $new_entry->remark = $req->remark;
-            $new_entry->flag = $req->flag;
+            $new_entry->user_id = Auth::user()->id;
+            $result = $new_entry->save();
+
+            if ($result) {
+                if ($req->tr_type == 'D') {
+                    // gl head balanse incremnet 
+                    $value = GlHead::where('glcode', '=', $req->gl_head)->first(['balance'])['balance'];
+                    GlHead::where('glcode', '=', $req->gl_head)->update(['balance' => $value + $req->amount]);
+
+                    //account sum 
+                    $acc_value = GlHead::where('glhead', '=', 'Account')->first(['balance'])['balance'];
+                    GlHead::where('glhead', '=', 'Account')->update(['balance' => $acc_value - $req->amount]);
+
+                    $req->session()->flash('msg', 'Data Successfully Save');
+                    return redirect('/admin/expense');
+                } else if ($req->tr_type == 'W') {
+                    $value = GlHead::where('glcode', '=', $req->gl_head)->first(['balance'])['balance'];
+                    GlHead::where('glcode', '=', $req->gl_head)->update(['balance' => $value + $req->amount]);
+
+                    $acc_value = GlHead::where('glhead', '=', 'Account')->first(['balance'])['balance'];
+                    GlHead::where('glhead', '=', 'Account')->update(['balance' => $acc_value + $req->amount]);
+
+                    $req->session()->flash('msg', 'Data Successfully Save');
+                    return redirect('/admin/expense');
+                }
+            }
+            // cash in hand  money update 
+        } else if ($req->tr_mood ==  'C') {
+            $new_entry = new Transaction();
+            $new_entry->officer_id = $req->officer;
+            $new_entry->gl_code = $req->gl_head;
+            $new_entry->amount = $req->amount;
+            $new_entry->month = $req->month;
+            $new_entry->date = $req->date;
+            $new_entry->acc_flag = "E";
+            $new_entry->tr_mood = $req->tr_mood;
+            $new_entry->tr_type = $req->tr_type;
+            $new_entry->remark = $req->remark;
             $new_entry->user_id = Auth::user()->id;
             $result = $new_entry->save();
             if ($result) {
-                $req->session()->flash('msg', 'Data Successfully Save');
-                return redirect('/admin/expense');
-            } else {
-                $req->session()->flash('msg', 'Data Do Not Save Successfully');
-                return redirect('/admin/expense');
+                if ($req->tr_type == 'D') {
+                    // gl head balanse incremnet 
+                    $value = GlHead::where('glcode', '=', $req->gl_head)->first(['balance'])['balance'];
+                    GlHead::where('glcode', '=', $req->gl_head)->update(['balance' => $value + $req->amount]);
+
+                    //account sum 
+                    $acc_value = GlHead::where('glhead', '=', 'Cash In Hand')->first(['balance'])['balance'];
+                    GlHead::where('glhead', '=', 'Cash In Hand')->update(['balance' => $acc_value - $req->amount]);
+
+                    $req->session()->flash('msg', 'Data Successfully Save');
+                    return redirect('/admin/expense');
+                } else if ($req->tr_type == 'W') {
+                    $value = GlHead::where('glcode', '=', $req->gl_head)->first(['balance'])['balance'];
+                    GlHead::where('glcode', '=', $req->gl_head)->update(['balance' => $value - $req->amount]);
+
+                    $acc_value = GlHead::where('glhead', '=', 'Cash In Hand')->first(['balance'])['balance'];
+                    GlHead::where('glhead', '=', 'Cash In Hand')->update(['balance' => $acc_value + $req->amount]);
+
+                    $req->session()->flash('msg', 'Data Successfully Save');
+                    return redirect('/admin/expense');
+                }
             }
         }
     }
 
     public function report()
     {
-        $code = GlHead::where('glhead', '=', 'Cash In Hand')->first('glcode')['glcode'];
-        $expense = Account::where('type', '=', 'E')->where('gl_code', '<>', $code)->get();
+        // $code = GlHead::where('glhead', '=', 'Cash In Hand')->first('glcode')['glcode'];
+        // $expense = Transaction::where('acc_flag', '=', 'E')->where('gl_code', '<>', $code)->get();
+        $expense = Transaction::where('acc_flag', '=', 'E')->get();
 
-//   .................. akhane total income and expense khoroch ber kora hoice
-        $expense_total = Account::where('type', '=', 'E')->sum('amount');  // sob khoroch account table 
-        $income_total = Account::where('type', '=', 'I')->sum('amount');
+        $account_total = GlHead::where('glhead', '=', 'Account')->first('balance')['balance'];
+        $cash_in_total = GlHead::where('glhead', '=', 'Cash In Hand')->first('balance')['balance'];
+        $minus = $account_total - $cash_in_total;
 
-//   ................. akhane cashInHand er ammont bahir kora hoice 
-        $cash_total = CashInHand::sum('amount');   // total cash in hand table sum of amount 
-        $cash_cost = Account::where('type', '=', 'E')->where('flag','=','2')->sum('amount'); // account table theke cashInHand theke  a ja khoroch hoice oi gula 
-        $cash_in_total =  $cash_total - $cash_cost;
+        // return view('admin.expense.expenseReport', compact('expense'))->with('minus', $minus)->with('account_total', $account_total)->with('cash_total', $cash_in_total);
+        return view('admin.expense.expenseReport', compact('expense'))->with('end')->with('start');
+    }
 
-        $minus = $income_total -  $expense_total - $cash_total ;
+    public function serachReport(Request $req)
+    {
+        // dd($req->end);
 
-        return view('admin.expense.expenseReport', compact('expense'))->with('minus', $minus)->with('expense_total', $expense_total)->with('cash_total', $cash_in_total) ;
+        $expense = Transaction::where('acc_flag', '=', 'E')->whereBetween('date', [$req->start, $req->end])->get();
+
+        // $account_total = GlHead::where('glhead', '=', 'Account')->first('balance')['balance'];
+        // $cash_in_total = GlHead::where('glhead', '=', 'Cash In Hand')->first('balance')['balance'];
+        // $minus = $account_total - $cash_in_total;
+
+        // return view('admin.expense.expenseReport', compact('expense'))->with('minus', $minus)->with('account_total', $account_total)->with('cash_total', $cash_in_total);
+        return view('admin.expense.expenseReport', compact('expense'))->with('end',$req->end)->with('start',$req->start);
     }
 
 
-    public function total_amount(Request $req){
-        if($req->flag == 1){
-            $expense_total = Account::where('type', '=', 'E')->sum('amount');
-            $income_total = Account::where('type', '=', 'I')->sum('amount');
-            $cashinhand_total = CashInHand::sum('amount');
-            $minus = $income_total -  $expense_total - $cashinhand_total ;
-            return $minus;
-        }else{
-            $cashinhand_total = CashInHand::sum('amount');
-            $cashinhand_cost = Account::where('type', '=', 'E')->where('flag','=','2')->sum('amount');
-            $cashinhand = $cashinhand_total -  $cashinhand_cost;
-            return $cashinhand;
+    public function total_amount(Request $req)
+    {
+        if ($req->tr_mood == 'A') {
+            $account_total = GlHead::where('glhead', '=', 'Account')->first('balance')['balance'];
+            return $account_total;
+        } else {
+            $cash_in_total = GlHead::where('glhead', '=', 'Cash In Hand')->first('balance')['balance'];
+            return $cash_in_total;
         }
     }
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+// test code 
+
+
+
+
+
+
+
+
+// public function entry(Request $req)
+// {
+//     $req->validate([
+//         'officer' => 'required|max:20',
+//         'gl_head' => 'required|max:20',
+//         'amount' => 'required|numeric',
+//         'date' => 'required|max:20',
+//         'month' => 'required|max:20',
+//         'remark' => 'required',
+//     ]);
+
+//     //  ...................new data input in Account ........... 
+//     if ($req->gl_head ==  GlHead::where('glhead', '=', 'Cash In Hand')->first('glcode')['glcode']) {
+//         $new_entry = new CashInHand();
+//         $new_entry->month = $req->month;
+//         $new_entry->date = $req->date;
+//         $new_entry->amount = $req->amount;
+//         $new_entry->cash_flag = $req->tr_type;
+//         $new_entry->user_id = Auth::user()->id;
+//         $gl_result = $new_entry->save();
+//         if ($gl_result) {
+//             if ($req->tr_type == 'D') {
+//                 $acc_value = GlHead::where('glhead', '=', 'Account')->first(['balance'])['balance'];
+//                 GlHead::where('glhead', '=', 'Account')->update(['balance' => $acc_value - $req->amount]);
+
+//                 $acc_value = GlHead::where('glcode', '=', $req->gl_head)->first(['balance'])['balance'];
+//                 GlHead::where('glcode', '=', $req->gl_head)->update(['balance' => $acc_value + $req->amount]);
+//             } else if ($req->tr_type == 'W') {
+//                 $acc_value = GlHead::where('glhead', '=', 'Account')->first(['balance'])['balance'];
+//                 GlHead::where('glhead', '=', 'Account')->update(['balance' => $acc_value + $req->amount]);
+
+//                 $acc_value = GlHead::where('glcode', '=', $req->gl_head)->first(['balance'])['balance'];
+//                 GlHead::where('glcode', '=', $req->gl_head)->update(['balance' => $acc_value - $req->amount]);
+//             }
+
+//             $req->session()->flash('msg', 'Data Successfully Save');
+//             return redirect('/admin/expense');
+//         } else {
+//             $req->session()->flash('msg', 'Data can Save Successfully');
+//             return redirect('/admin/expense');
+//         }
+//     } else {
+//         $new_entry = new Transaction();
+//         $new_entry->officer_id = $req->officer;
+//         $new_entry->gl_code = $req->gl_head;
+//         $new_entry->amount = $req->amount;
+//         $new_entry->month = $req->month;
+//         $new_entry->date = $req->date;
+//         $new_entry->acc_flag = "E";
+//         $new_entry->tr_mood = $req->tr_mood;
+//         $new_entry->tr_type = $req->tr_type;
+//         $new_entry->remark = $req->remark;
+//         $new_entry->user_id = Auth::user()->id;
+//         $result = $new_entry->save();
+//         if ($result) {
+//             if ($req->tr_mood == 'A') {
+//                 if ($req->tr_type == 'D') {
+//                     $acc_value = GlHead::where('glhead', '=', 'Account')->first(['balance'])['balance'];
+//                     GlHead::where('glhead', '=', 'Account')->update(['balance' => $acc_value - $req->amount]);
+
+//                     $acc_value = GlHead::where('glcode', '=', $req->gl_head)->first(['balance'])['balance'];
+//                     GlHead::where('glcode', '=', $req->gl_head)->update(['balance' => $acc_value + $req->amount]);
+//                 } else if ($req->tr_type == 'W') {
+//                     $acc_value = GlHead::where('glhead', '=', 'Account')->first(['balance'])['balance'];
+//                     GlHead::where('glhead', '=', 'Account')->update(['balance' => $acc_value + $req->amount]);
+
+//                     $acc_value = GlHead::where('glcode', '=', $req->gl_head)->first(['balance'])['balance'];
+//                     GlHead::where('glcode', '=', $req->gl_head)->update(['balance' => $acc_value - $req->amount]);
+//                 }
+//             } else if ($req->tr_mood == 'C') {
+//                 if ($req->tr_type == 'D') {
+//                     $acc_value = GlHead::where('glhead', '=', 'Cash In Hand')->first(['balance'])['balance'];
+//                     GlHead::where('glhead', '=', 'Cash In Hand')->update(['balance' => $acc_value - $req->amount]);
+
+//                     $acc_value = GlHead::where('glcode', '=', $req->gl_head)->first(['balance'])['balance'];
+//                     GlHead::where('glcode', '=', $req->gl_head)->update(['balance' => $acc_value + $req->amount]);
+//                 } else if ($req->tr_type == 'W') {
+//                     $acc_value = GlHead::where('glhead', '=', 'Cash In Hand')->first(['balance'])['balance'];
+//                     GlHead::where('glhead', '=', 'Cash In Hand')->update(['balance' => $acc_value + $req->amount]);
+
+//                     $acc_value = GlHead::where('glcode', '=', $req->gl_head)->first(['balance'])['balance'];
+//                     GlHead::where('glcode', '=', $req->gl_head)->update(['balance' => $acc_value - $req->amount]);
+//                 }
+//             }
+
+//             $req->session()->flash('msg', 'Data Successfully Save');
+//             return redirect('/admin/expense');
+//         } else {
+//             $req->session()->flash('msg', 'Data Do Not Save Successfully');
+//             return redirect('/admin/expense');
+//         }
+//     }
+// }

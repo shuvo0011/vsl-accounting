@@ -13,16 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('salaries', function (Blueprint $table) {
+        Schema::create('permissions', function (Blueprint $table) {
             $table->id();
-            $table->integer('officer_id');
-            $table->string('salary_month',15);
-            $table->double('salary_amount');
-            $table->double('payment_amount');
-            $table->string('payment_date',15);
-            $table->double('total_due');
-            $table->string('remark');
-            $table->integer('user_id');
+            $table->string("role_id",20);
+            $table->string("user_id",20);
             $table->timestamps();
         });
     }
@@ -34,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('salaries');
+        Schema::dropIfExists('permissions');
     }
 };

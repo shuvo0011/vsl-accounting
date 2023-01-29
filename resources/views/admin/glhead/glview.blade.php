@@ -19,7 +19,7 @@ Dashboard
                     </ol>
                 </div>
             </div>
-        </div><!-- /.container-fluid -->
+        </div>
     </section>
 
     <div style="padding-left:15px; background-color:aliceblue; color:black; ">
@@ -40,69 +40,69 @@ Dashboard
         <form action=" {{ route('admin.glhead') }}" method="POST">
             @csrf
             <div class="card-body">
-
                 <div class="form-group">
-                    <label for="glhead"> GL Head  </label>
+                    <label for="glhead"> GL Head </label>
                     <input type="text" class="form-control" name="glhead" id="glhead" placeholder=" GL Head ">
                 </div>
-
                 <div class="form-group">
-                    <label for="gltype">  TYPE </label>
+                    <label for="gltype"> TYPE </label>
                     <select class="form-control" name="gltype" id="gltype">
                         <option value="I"> Income </option>
                         <option value="E"> Expense </option>
-                        <option value="B"> Both </option>
+                        <option value=""> Both </option>
                     </select>
                 </div>
-
-
-            <div class="card-footer">
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
+                <div class="form-group">
+                    <label for="glbudget"> Budget </label>
+                    <input type="text" class="form-control" name="glbudget" id="glbudget" placeholder=" Bugdet ">
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
         </form>
     </div>
 
-
-    @if(count($gldata)<1)
-            <div class="card-footer canter">
-                <p> NO DATA </p>
-            </div>
-    @else
-    <div>
-        <table id="example1" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th> SL </th>
-                    <th> GL Head  </th>
-                    <th> GL CODE  </th>
-                    <th> GL Type  </th>
-                    <th> GL Balance  </th>
-                </tr>
-            </thead>
-            <tbody>
-            @php $sl=0 @endphp
-            @foreach($gldata as $row)
-                <tr>
-                    <td> {{ ++$sl }}</td>
-                    <td> {{ $row->glhead}}</td>
-                    <td> {{ $row->glcode}}</td>
-                    <td> {{ $row->gltype}}</td>
-                    <td> {{ $row->balance }}</td>
-                </tr>
-            @endforeach
-            </tbody>
-        </table>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                GL HEAD Entry List
+            </h3>
+        </div>
+        <div class="card-body">
+            <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th> SL </th>
+                        <th> GL Head </th>
+                        <th> GL Code </th>
+                        <th> GL Type </th>
+                        <th> GL Balance </th>
+                        <th> GL Budget </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php $sl=0 @endphp
+                    @foreach($gldata as $row)
+                    <tr>
+                        <td> {{ ++$sl }}</td>
+                        <td> {{ $row->glhead}}</td>
+                        <td> {{ $row->glcode}}</td>
+                        <td> {{ $row->gltype}}</td>
+                        <td> {{ $row->balance }}</td>
+                        <td> {{ $row->glbudget }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                </tfoot>
+            </table>
+        </div>
     </div>
-    @endif
-
 </div>
-
-
 @endsection
 
 
 
+
 @section('script.js')
-
-
 @endsection

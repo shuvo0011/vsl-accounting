@@ -44,7 +44,7 @@ Salary Edit
                 <div class="form-group">
                     <label for="salary_month"> Salary Month </label>
                     <input type="date" class="form-control" name="salary_month" value="{{ $data->salary_month }}" id="salary_month">
-                </div>
+                </div> 
 
                 <div class="form-group">
                     <label for="salary_amount"> Salary Amount </label>

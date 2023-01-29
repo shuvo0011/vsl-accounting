@@ -3,81 +3,191 @@
 Report
 @endsection
 
+
+
 @section('page-content')
+
+<link rel="stylesheet" href="{{ asset('support_files/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}" />
+<link rel="stylesheet" href="{{ asset('support_files/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}" />
+<link rel="stylesheet" href="{{ asset('support_files/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}" />
+<link rel="stylesheet" href="{{ asset('support_files/dist/css/adminlte.min.css') }}" />
+
 
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>All Income Report</h1>
+                    <h1>Income Report</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active"> Income Entry </li>
+                        <li class="breadcrumb-item">
+                            <a href="#">Home</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            DataTables
+                        </li>
                     </ol>
                 </div>
             </div>
-        </div><!-- /.container-fluid -->
+        </div>
     </section>
 
-    <div>
-        <table id="table" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th> SL </th>
-                    <th> Date </th>
-                    <th> Income Month </th>
-                    <th> Officer </th>
-                    <th> GL_HEAD </th>
-                    <th> Amount </th>
-                    <th> Remarks </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td> </td>
-                    <td></td>
-                    <td> </td>
-                    <td> </td>
-                    <td > Total Amount </td>
-                    <td id="total"> </td>
-                    <td></td>
-                </tr>
-                @foreach($income as $row)
-                <tr>
-                    <td> {{ $row->id }}</td>
-                    <td>{{ $row->date }}</td>
-                    <td>{{ $row->month }}</td>
-                    <td>{{ $row->office->officer_name }}</td>
-                    <td>{{ $row->glname->glhead  }}</td>
-                    <td class="amount">{{ $row->amount }}</td>
-                    <td>{{ $row->remark }}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+    <section>
+        <form action=" {{ route('admin.income.report')}}" method="post">
+            @csrf
+            <div class="row m-5">
+                <div class="col">
+                    <label for="start"> Start Date </label>
+                    <input type="date" class="form-control" name="start">
+                </div>
 
-    
+                <div class="col">
+                    <label for="end"> End Date </label>
+                    <input type="date" class="form-control" name="end">
+                </div>
+                <div class="col m-4">
+                    <button class="btn btn-primary"> submit</button>
+                </div>
+            </div>
+        </form>
+    </section>
+
+    <input type="hidden" id="start" value="{{ $start }}" >
+    <input type="hidden" id="end" value="{{ $end }}" >
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <!-- <h3 class="card-title">
+                                Income Report
+                            </h3> -->
+                        </div>
+                        <div class="card-body">
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th> SL </th>
+                                        <th> Date </th>
+                                        <th> Income Month </th>
+                                        <th> Officer </th>
+                                        <th> GL_HEAD </th>
+                                        <th> Transaction Type </th>
+                                        <th> Amount </th>
+                                        <th> Remarks </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($income_list as $row)
+                                    <tr>
+                                        <td> {{ $row->id }}</td>
+                                        <td>{{ $row->date }}</td>
+                                        <td>{{ $row->month }}</td>
+                                        <td>{{ $row->office->officer_name }}</td>
+                                        <td>{{ $row->glname->glhead  }}</td>
+                                        <td>
+                                            @php
+                                            if($row->tr_type == 'D'){
+                                            echo "Deposite";
+                                            }else{
+                                            echo "Withdraw";
+                                            }
+                                            @endphp
+                                        </td>
+                                        <td class="amount">{{ $row->amount }}</td>
+                                        <td>{{ $row->remark }}</td>
+                                    </tr>
+                                    @endforeach
+                                    {{-- <tr>
+                                        <td> </td>
+                                        <td></td>
+                                        <td> </td>
+                                        <td> </td>
+                                        <td style="color: green;"> Total Amount </td>
+                                        <td> </td>
+                                         <td id="total"> {{ $account_total }} </td> 
+                                        <td></td>
+                                    </tr> --}}
+                                </tbody>
+                                <tfoot>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
+
 @endsection
+
+
 
 
 @section('script.js')
 
-<script>
-    $(document).ready(function() {
-        var sum = 0;
-        $(".amount").each(function() {
-            var data = $(this).html();
-           // console.log(data);
-            sum = sum + parseFloat(data);
-        })
-        //console.log(sum);
-        $('#total').html(sum);
-    })
-</script>
+<script src=" {{ asset ('support_files/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src=" {{ asset ('support_files/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+<script src=" {{ asset ('support_files/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+<script src=" {{ asset ('support_files/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+<script src=" {{ asset ('support_files/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+<script src=" {{ asset ('support_files/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src=" {{ asset ('support_files/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+<script src=" {{ asset ('support_files/plugins/jszip/jszip.min.js') }}"></script>
+<script src=" {{ asset ('support_files/plugins/pdfmake/pdfmake.min.js') }}"></script>
+<script src=" {{ asset ('support_files/plugins/pdfmake/vfs_fonts.js') }}"></script>
+<script src=" {{ asset ('support_files/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
 
+
+
+<script>
+    $(function() {
+
+        var start = document.getElementById("start").value;
+        var end = document.getElementById("end").value;
+
+        console.log(start);
+
+        var now = new Date();
+        var date = now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear();
+        $("#example1").DataTable({
+            dom: 'Blftipr',
+            buttons: [{
+                    extend: 'excelHtml5',
+                    text: 'Excel',
+                    title: "Income report",
+                    messageTop: "Date: " + date,
+                    //titleAttr: 'Exportar a Excel',
+                    //  className: 'btn btn-success'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF',
+                    title: "Income Report",
+                    messageTop: "Date: " + date + "\n start date: "+start + "\n end date :"+end,
+                   // titleAttr: 'Exportar a PDF',
+                    // className: 'btn btn-danger'
+                },
+            ],
+            columnDefs: [{
+                targets: -9,
+                className: 'dt-body-right'
+            }],
+            columnDefs: [{
+                    targets: [1, 2, 4, 6, 7],
+                    searchable: true
+                },
+                {
+                    targets: '_all',
+                    searchable: false
+                }
+            ]
+        })
+    });
+</script>
 @endsection
